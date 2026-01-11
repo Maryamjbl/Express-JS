@@ -1,32 +1,104 @@
 const express = require("express");
-
 const app = express();
 
-app.listen(4000, () => {
-  console.log("Server running on http://localhost:4000/");
+app.use(express.json());
+
+let users = [];
+let products = [];
+
+app.post("/users", (req, res) => {
+  const { name, email } = req.body;
+
+  if (!name || !email) {
+    return res.status(400).json({ message: "Name and email are required" });
+  }
+
+  const newUser = {
+    id: users.length + 1,
+    name,
+    email,
+  };
+
+  users.push(newUser);
+
+  res.status(201).json({
+    message: "User added successfully",
+    user: newUser,
+  });
 });
 
-app.get("/", (req, res) => {
-  res.send("Welcome to Express JS!");
+app.get("/users", (req, res) => {
+  res.json(users);
 });
 
-app.get("/about", (req, res) => {
-  res.send("Request from API endpoint!");
+app.get("/users/:id", (req, res) => {
+  const user = users.find((u) => u.id === parseInt(req.params.id));
+
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  res.json(user);
 });
 
-app.get("/contact", (req, res) => {
-  res.send("Contact us at support@aysha.com");
+app.put("/users/:id", (req, res) => {
+  const user = users.find((u) => u.id === parseInt(req.params.id));
+
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  user.name = req.body.name || user.name;
+  user.email = req.body.email || user.email;
+
+  res.json({ message: "User updated", user });
 });
 
-app.get("/users", (request, response) => {
-  response.json([
-    {
-      id: 1,
-      name: "Aysha Khan",
-    },
-    {
-      id: 2,
-      name: "Fatima Ali",
-    },
-  ]);
+app.delete("/users/:id", (req, res) => {
+  users = users.filter((u) => u.id !== parseInt(req.params.id));
+  res.json({ message: "User deleted" });
+});
+
+app.post("/products", (req, res) => {
+  const { name, price } = req.body;
+
+  if (!name || price === undefined) {
+    return res.status(400).json({ message: "Name and price are required" });
+  }
+
+  if (typeof price !== "number" || price < 0) {
+    return res.status(400).json({ message: "Please Enter a valid Price" });
+  }
+
+  const newProduct = {
+    id: products.length + 1,
+    name,
+    price,
+  };
+
+  products.push(newProduct);
+
+  res.status(201).json({
+    message: "Product added successfully",
+    product: newProduct,
+  });
+});
+
+app.get("/products", (req, res) => {
+  res.json(products);
+});
+
+app.get("/products/:id", (req, res) => {
+  const productId = parseInt(req.params.id);
+  const product = products.find((p) => p.id === productId);
+
+  if (!product) {
+    return res.status(404).json({ message: "Product not found" });
+  }
+
+  res.json(product);
+});
+
+app.listen(3000, () => {
+  console.log("Server running on http://localhost:3000");
 });
