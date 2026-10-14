@@ -7,7 +7,7 @@ const router = express.Router();
 const Customer = require("../models/Customer");
 
 const limiter = rateLimit({
-  windowMs:   60 *60 * 1000,
+  windowMs:   3 *60 * 1000,
   max: 50
 });
 
@@ -39,6 +39,8 @@ const validateCustomer = (req, res, next) => {
       message: "Credit Limit should be between 0 and 1,00,000",
     });
   }
+
+  const email = 
 
   userData.name = userData.name.trim();
   userData.email = userData.email.toLowerCase();

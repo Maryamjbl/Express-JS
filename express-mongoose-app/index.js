@@ -12,7 +12,7 @@ app.use(helmet());
 
 const limiter = rateLimit({
   windowMs:  60 * 1000,
-  max: 0
+  max: 50
 });
 app.use(limiter);
 
@@ -20,6 +20,10 @@ const customerRoutes = require("./routes/customer.route");
 app.use("/customers", customerRoutes);
 const authRoutes = require("./routes/auth.routes");
 app.use("/auth", authRoutes);
+const itemRoutes = require("./routes/items.routes");
+app.use("/items", itemRoutes);
+const invoiceRoutes = require("./routes/invoices.routes");
+app.use("/invoices", invoiceRoutes);
 
 const PORT = 3000;
 app.listen(PORT, () => {
